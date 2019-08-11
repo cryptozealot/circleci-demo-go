@@ -57,6 +57,18 @@ jobs: # basic units of work in a run
           name: Get GHR
           command: go get -u github.com/tcnksm/ghr
       
+      -run:
+          name: Env Vars Check GithubToken
+          command: echo $GITHUB_TOKEN
+      
+      -run:
+          name: Env Vars Check CircleProjectUsername
+          command: echo $CIRCLE_PROJECT_USERNAME
+          
+      -run:
+          name: Env Vars Check CircleProjectReponame
+          command: echo $CIRCLE_PROJECT_REPONAME
+      
       - run:
           name: "Publish Release on GitHub"
           #command: |
