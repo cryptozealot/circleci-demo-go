@@ -33,6 +33,9 @@ jobs: # basic units of work in a run
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
           
       - run:
+          name: Get GHR
+          command: go get -u github.com/tcnksm/ghr
+      - run:
           name: "Publish Release on GitHub"
           command: |
             VERSION=3
