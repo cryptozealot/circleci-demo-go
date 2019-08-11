@@ -9,14 +9,14 @@ jobs: # basic units of work in a run
         environment: # environment variables for primary container
           POSTGRES_USER: circleci-demo-go
           POSTGRES_DB: circle_test
+
     parallelism: 2
 
     environment: # environment variables for the build itself
       TEST_RESULTS: /tmp/test-results # path to where test results will be saved
 
     steps: # steps that comprise the `build` job
-      - attach_workspace:
-          at: ./artifacts
+      - checkout # check out source code to working directory
       - run: mkdir -p $TEST_RESULTS # create the test results directory
 
       - restore_cache: # restores saved cache if no changes are detected since last run
@@ -27,34 +27,23 @@ jobs: # basic units of work in a run
       - run:
           name: Waiting for Postgres to be ready
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-          
-      - run:
-          name: Get GHR
-          command: go get -u github.com/tcnksm/ghr
-          
+
       - run:
           name: Run unit tests
           environment: # environment variables for the database url and path to migration files
             CONTACTS_DB_URL: "postgres://circleci-demo-go@localhost:5432/circle_test?sslmode=disable"
             CONTACTS_DB_MIGRATIONS: /home/circleci/project/db/migrations
+
           # store the results of our tests in the $TEST_RESULTS directory
           command: |
             PACKAGE_NAMES=$(go list ./... | circleci tests split --split-by=timings --timings-type=classname)
             gotestsum --junitfile ${TEST_RESULTS}/gotestsum-report.xml -- $PACKAGE_NAMES
-            
       - run: make # pull and build dependencies for the project
 
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
             - "/go/pkg/mod"
-            
-      - run:
-          name: "Publish Release on GitHub"
-          #command: |
-            #VERSION=3
-            #ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
-          command: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME v1.0.1 /go/pkg/mod
 
       - run:
           name: Start service
@@ -63,6 +52,17 @@ jobs: # basic units of work in a run
             CONTACTS_DB_MIGRATIONS: /home/circleci/project/db/migrations
           command: ./workdir/contacts
           background: true # keep service running and proceed to next step
+          
+      - run:
+          name: Get GHR
+          command: go get -u github.com/tcnksm/ghr
+      
+      - run:
+          name: "Publish Release on GitHub"
+          #command: |
+            #VERSION=3
+            #ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+          command: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME v1.0.1 /go/pkg/mod
 
       - run:
           name: Validate service is working
@@ -75,7 +75,6 @@ jobs: # basic units of work in a run
 
       - store_test_results: # upload test results for display in Test Summary
           path: /tmp/test-results
-          
 workflows:
   version: 2
   build-workflow:
