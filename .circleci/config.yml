@@ -62,7 +62,7 @@ jobs: # basic units of work in a run
           #command: |
             #VERSION=3
             #ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
-          command: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME 'v1.0.1' workdir/
+          command: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME 'v1.0.1' ./workdir/
           #command: ghr v1 workdir/contacts
       - run:
           name: Validate service is working
