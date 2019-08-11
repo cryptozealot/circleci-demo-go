@@ -55,12 +55,18 @@ jobs: # basic units of work in a run
           background: true # keep service running and proceed to next step
 
       - run:
+          name: Validate service is working
+          command: |
+            sleep 5
+            curl --retry 10 --retry-delay 1 -X POST --header "Content-Type: application/json" -d '{"email":"test@example.com","name":"Test User"}' http://localhost:8080/contacts
+
+      - run:
           name: Get GHR
           command: go get -u github.com/tcnksm/ghr
 
       - run:
           name: Env Vars Check GithubToken
-          command: echo $GITHUB_TOKEN
+          command: echo token - $GITHUB_TOKEN, user - $CIRCLE_PROJECT_USERNAME, cirepo - $CIRCLE_PROJECT_REPONAME 
 
       - run:
           name: Env Vars Check CircleProjectUsername
@@ -72,16 +78,7 @@ jobs: # basic units of work in a run
 
       - run:
           name: "Publish Release on GitHub"
-          #command: |
-            #VERSION=3
-            #ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
           command: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -replace 'v1.1.0' ./workdir/contacts
-          #command: ghr v1 workdir/contacts
-      - run:
-          name: Validate service is working
-          command: |
-            sleep 5
-            curl --retry 10 --retry-delay 1 -X POST --header "Content-Type: application/json" -d '{"email":"test@example.com","name":"Test User"}' http://localhost:8080/contacts
 
       - store_artifacts: # upload test summary for display in Artifacts
           path: /tmp/test-results
