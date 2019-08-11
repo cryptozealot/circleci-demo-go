@@ -53,19 +53,19 @@ jobs: # basic units of work in a run
           command: ./workdir/contacts
           background: true # keep service running and proceed to next step
           
-      -run:
+      - run:
           name: Get GHR
           command: go get -u github.com/tcnksm/ghr
           
-      -run:
+      - run:
           name: Env Vars Check GithubToken
           command: echo $GITHUB_TOKEN
       
-      -run:
+      - run:
           name: Env Vars Check CircleProjectUsername
           command: echo $CIRCLE_PROJECT_USERNAME
           
-      -run:
+      - run:
           name: Env Vars Check CircleProjectReponame
           command: echo $CIRCLE_PROJECT_REPONAME
       
