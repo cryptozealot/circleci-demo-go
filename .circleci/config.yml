@@ -24,7 +24,14 @@ jobs: # basic units of work in a run
         environment: # environment variables for primary container
           POSTGRES_USER: circleci-demo-go
           POSTGRES_DB: circle_test
-
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=$(my-binary --version)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
     parallelism: 2
 
     environment: # environment variables for the build itself
