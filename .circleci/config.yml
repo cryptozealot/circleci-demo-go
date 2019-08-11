@@ -56,7 +56,7 @@ jobs: # basic units of work in a run
       - run:
           name: Get GHR
           command: go get -u github.com/tcnksm/ghr
-      
+          
       -run:
           name: Env Vars Check GithubToken
           command: echo $GITHUB_TOKEN
