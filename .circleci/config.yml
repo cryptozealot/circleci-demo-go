@@ -31,12 +31,12 @@ jobs: # basic units of work in a run
       - run:
           name: Get GHR
           command: go get -u github.com/tcnksm/ghr
+          
       - run:
           name: Run unit tests
           environment: # environment variables for the database url and path to migration files
             CONTACTS_DB_URL: "postgres://circleci-demo-go@localhost:5432/circle_test?sslmode=disable"
             CONTACTS_DB_MIGRATIONS: /home/circleci/project/db/migrations
-
           # store the results of our tests in the $TEST_RESULTS directory
           command: |
             PACKAGE_NAMES=$(go list ./... | circleci tests split --split-by=timings --timings-type=classname)
@@ -48,6 +48,7 @@ jobs: # basic units of work in a run
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
             - "/go/pkg/mod"
+            
       - run:
           name: "Publish Release on GitHub"
           #command: |
