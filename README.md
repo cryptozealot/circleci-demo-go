@@ -1,3 +1,5 @@
+A fork of Circle CI Demo app for Go. Added functionality to config.yml to test for env vars, download ghr, and upload compiled binary release to github release repo using ghr.
+
 # CircleCI 2.0 Demo Application: Go (Golang) [![CircleCI Build Status](https://circleci.com/gh/CircleCI-Public/circleci-demo-go.svg?style=shield)](https://circleci.com/gh/CircleCI-Public/circleci-demo-go) [![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CircleCI-Public/circleci-demo-go/master/LICENSE.md)
 
 This is an example application showcasing how to run Go on CircleCI 2.0.
