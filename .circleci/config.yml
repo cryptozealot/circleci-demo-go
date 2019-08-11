@@ -38,7 +38,7 @@ jobs: # basic units of work in a run
           command: |
             PACKAGE_NAMES=$(go list ./... | circleci tests split --split-by=timings --timings-type=classname)
             gotestsum --junitfile ${TEST_RESULTS}/gotestsum-report.xml -- $PACKAGE_NAMES
-            
+
       - run: make # pull and build dependencies for the project
 
       - save_cache:
@@ -53,23 +53,23 @@ jobs: # basic units of work in a run
             CONTACTS_DB_MIGRATIONS: /home/circleci/project/db/migrations
           command: ./workdir/contacts
           background: true # keep service running and proceed to next step
-          
+
       - run:
           name: Get GHR
           command: go get -u github.com/tcnksm/ghr
-          
+
       - run:
           name: Env Vars Check GithubToken
           command: echo $GITHUB_TOKEN
-      
+
       - run:
           name: Env Vars Check CircleProjectUsername
           command: echo $CIRCLE_PROJECT_USERNAME
-          
+
       - run:
           name: Env Vars Check CircleProjectReponame
           command: echo $CIRCLE_PROJECT_REPONAME
-      
+
       - run:
           name: "Publish Release on GitHub"
           #command: |
@@ -82,7 +82,7 @@ jobs: # basic units of work in a run
           command: |
             sleep 5
             curl --retry 10 --retry-delay 1 -X POST --header "Content-Type: application/json" -d '{"email":"test@example.com","name":"Test User"}' http://localhost:8080/contacts
-            
+
       - store_artifacts: # upload test summary for display in Artifacts
           path: /tmp/test-results
           destination: raw-test-output
